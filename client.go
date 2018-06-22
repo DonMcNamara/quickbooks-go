@@ -89,6 +89,59 @@ func (c *Client) FetchCompanyInfo() (*CompanyInfo, error) {
 	return &r.CompanyInfo, err
 }
 
+// FetchInvoices gets the full list of Customers in the QuickBooks account.
+func (c *Client) FetchInvoices() ([]Invoice, error) {
+	var u, err = url.Parse(string(c.Endpoint))
+	if err != nil {
+		return nil, err
+	}
+	u.Path = "/v3/company/" + c.RealmID + "/query"
+
+	var v = url.Values{}
+	v.Add("query", "SELECT * FROM Payment")
+	u.RawQuery = v.Encode()
+	var req *http.Request
+	req, err = http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Accept", "application/json")
+	var res *http.Response
+	res, err = c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	bodyString := string(body)
+	println(bodyString)
+
+	// TODO This could be better...
+	if res.StatusCode != http.StatusOK {
+		var msg []byte
+		msg, err = ioutil.ReadAll(res.Body)
+		return nil, errors.New(strconv.Itoa(res.StatusCode) + " " + string(msg))
+	}
+
+	var r struct {
+		QueryResponse struct {
+			Invoice       []Invoice
+			StartPosition int
+			MaxResults    int
+		}
+	}
+	err = json.NewDecoder(res.Body).Decode(&r)
+	if err != nil {
+		return nil, err
+	}
+	// Make sure we don't return nil if there are no customers.
+	if r.QueryResponse.Invoice == nil {
+		r.QueryResponse.Invoice = make([]Invoice, 0)
+	}
+	return r.QueryResponse.Invoice, nil
+}
+
 // FetchCustomers gets the full list of Customers in the QuickBooks account.
 func (c *Client) FetchCustomers() ([]Customer, error) {
 	var u, err = url.Parse(string(c.Endpoint))

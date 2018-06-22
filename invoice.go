@@ -3,8 +3,6 @@
 
 package quickbooks
 
-import null "gopkg.in/guregu/null.v3"
-
 // Invoice represents a QuickBooks Invoice object.
 type Invoice struct {
 	ID        string `json:"Id,omitempty"`
@@ -16,8 +14,8 @@ type Invoice struct {
 	//DepartmentRef
 	PrivateNote string `json:",omitempty"`
 	//LinkedTxn
-	Line         []SalesItemLine
-	TxnTaxDetail TxnTaxDetail `json:",omitempty"`
+	Line []SalesItemLine
+	//TxnTaxDetail
 	CustomerRef  ReferenceType
 	CustomerMemo MemoRef         `json:",omitempty"`
 	BillAddr     PhysicalAddress `json:",omitempty"`
@@ -49,31 +47,6 @@ type Invoice struct {
 	DepositToAccountRef          ReferenceType `json:",omitempty"`
 }
 
-// TxnTaxDetail ...
-type TxnTaxDetail struct {
-	TxnTaxCodeRef ReferenceType `json:",omitempty"`
-	TotalTax      float32       `json:",omitempty"`
-	TaxLine       []Line        `json:",omitempty"`
-}
-
-// Line ...
-type Line struct {
-	Amount float32 `json:",omitempty"`
-	// Must be set to "TaxLineDetail".
-	DetailType    string
-	TaxLineDetail TaxLineDetail
-}
-
-// TaxLineDetail ...
-type TaxLineDetail struct {
-	PercentBased     bool    `json:",omitempty"`
-	NetAmountTaxable float32 `json:",omitempty"`
-	//TaxInclusiveAmount float32 `json:",omitempty"`
-	//OverrideDeltaAmount
-	TaxPercent float32 `json:',omitempty"`
-	TaxRateRef ReferenceType
-}
-
 // SalesItemLine ...
 type SalesItemLine struct {
 	ID                  string `json:"Id,omitempty"`
@@ -90,11 +63,11 @@ type SalesItemLineDetail struct {
 	ClassRef  ReferenceType `json:",omitempty"`
 	UnitPrice float32       `json:",omitempty"`
 	//MarkupInfo
-	Qty             int           `json:",omitempty"`
-	ItemAccountRef  ReferenceType `json:",omitempty"`
-	TaxCodeRef      ReferenceType `json:",omitempty"`
-	ServiceDate     null.Time     `json:",omitempty"`
-	TaxInclusiveAmt float32       `json:",omitempty"`
-	DiscountRate    float32       `json:",omitempty"`
-	DiscountAmt     float32       `json:",omitempty"`
+	Qty            float32       `json:",omitempty"`
+	ItemAccountRef ReferenceType `json:",omitempty"`
+	TaxCodeRef     ReferenceType `json:",omitempty"`
+	//ServiceDate     null.Time     `json:",omitempty"`
+	TaxInclusiveAmt float32 `json:",omitempty"`
+	DiscountRate    float32 `json:",omitempty"`
+	DiscountAmt     float32 `json:",omitempty"`
 }

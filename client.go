@@ -98,7 +98,7 @@ func (c *Client) FetchInvoices() ([]Invoice, error) {
 	u.Path = "/v3/company/" + c.RealmID + "/query"
 
 	var v = url.Values{}
-	v.Add("query", "SELECT * FROM Payment")
+	v.Add("query", "SELECT * FROM Invoice")
 	u.RawQuery = v.Encode()
 	var req *http.Request
 	req, err = http.NewRequest("GET", u.String(), nil)
@@ -113,9 +113,9 @@ func (c *Client) FetchInvoices() ([]Invoice, error) {
 	}
 	defer res.Body.Close()
 
-	body, err := ioutil.ReadAll(res.Body)
-	bodyString := string(body)
-	println(bodyString)
+	// body, err := ioutil.ReadAll(res.Body)
+	// bodyString := string(body)
+	// println(bodyString)
 
 	// TODO This could be better...
 	if res.StatusCode != http.StatusOK {
